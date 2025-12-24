@@ -26,6 +26,9 @@ public class Drivetrain  {
     private Servo right_intake_servo;
     private Servo left_launch_servo;
     private Servo right_launch_servo;
+    private Servo left_sorting_servo;
+    private Servo middle_sorting_servo;
+    private Servo right_sorting_servo;
     public DistanceSensor front_distance;
     public DistanceSensor back_distance;
     // Variables
@@ -42,6 +45,9 @@ public class Drivetrain  {
         right_intake_servo = hardwareMap.servo.get("right_intake_servo");
         left_launch_servo = hardwareMap.servo.get("left_launch_servo");
         right_launch_servo = hardwareMap.servo.get("right_launch_servo");
+        left_sorting_servo = hardwareMap.servo.get("left_sorting_servo");
+        middle_sorting_servo = hardwareMap.servo.get("middle_sorting_servo");
+        right_sorting_servo = hardwareMap.servo.get("right_sorting_servo");
         launch_motor = hardwareMap.dcMotor.get("launch_motor");
         front_left = hardwareMap.dcMotor.get("front_left");
         back_left = hardwareMap.dcMotor.get("back_left");
@@ -56,11 +62,11 @@ public class Drivetrain  {
         // Setting the opposite side as the opposite of the other
         front_left.setDirection(DcMotor.Direction.FORWARD);
         back_left.setDirection(DcMotor.Direction.REVERSE);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_right.setDirection(DcMotor.Direction.FORWARD);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_right.setDirection(DcMotor.Direction.REVERSE);
         launch_motor.setDirection(DcMotor.Direction.REVERSE);
-        left_intake_motor.setDirection(DcMotor.Direction.REVERSE);
-        right_intake_motor.setDirection(DcMotor.Direction.FORWARD);
+        left_intake_motor.setDirection(DcMotor.Direction.FORWARD);
+        right_intake_motor.setDirection(DcMotor.Direction.REVERSE);
         // Settings the Encoding
         front_left.setMode(com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -94,12 +100,10 @@ public class Drivetrain  {
         back_right.setPower(back_right_power);
     }
     public void drive (double forward, double right, double rotate) {
-        double front_left_power = forward + right - rotate;
-        double back_left_power = forward - right - rotate;
+        double front_left_power = forward + right + rotate;
+        double back_left_power = forward + right - rotate;
         double front_right_power = forward - right + rotate;
-        double back_right_power = forward + right + rotate;
-        // left_bottom is actually right_top
-        // And right_top is left_bottom
+        double back_right_power = forward - right - rotate;
         setPowers(front_left_power, back_left_power, front_right_power, back_right_power);
     }
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
@@ -137,5 +141,10 @@ public class Drivetrain  {
     public void runLauncherServos (double left_launcher_servo_position, double right_intake_servo_position) {
         left_launch_servo.setPosition(left_launcher_servo_position);
         right_launch_servo.setPosition(right_intake_servo_position);
+    }
+    public void runSorterServos (double left_sorting_servo_position, double middle_sorting_servo_position, double right_sorting_servo_position) {
+        left_sorting_servo.setPosition(left_sorting_servo_position);
+        middle_sorting_servo.setPosition(middle_sorting_servo_position);
+        right_sorting_servo.setPosition(right_sorting_servo_position);
     }
 }
