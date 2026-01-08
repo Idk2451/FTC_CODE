@@ -14,6 +14,11 @@ public class Driving extends OpMode {
 
     @Override
     public void loop() {
+        double right_trigger_value = (gamepad1.right_trigger);
+        double left_trigger_value = (-gamepad1.left_trigger);
+        double speed = left_trigger_value + right_trigger_value;
+        drive.runBall_launcher(speed);
+
         double forward = -gamepad1.left_stick_y;
         double right = -gamepad1.right_stick_x;
         double rotate = -gamepad1.left_stick_x;
@@ -34,12 +39,6 @@ public class Driving extends OpMode {
             drive.runIntake(0);
             drive.runIntakeServos(0.5, 0.5);
         }
-        if (gamepad1.left_bumper) {
-            drive.runLauncherServos(0, 1);
-        }
-        if (gamepad1.right_bumper) {
-            drive.runLauncherServos(1, 0);
-        }
         if (gamepad1.dpad_left) {
             drive.runSorterServos(0, 0, 0);
         }
@@ -52,5 +51,5 @@ public class Driving extends OpMode {
         if (gamepad1.dpad_down) {
             drive.runSorterServos(0.5, 0.5, 0.5);
         }
-      }
     }
+}

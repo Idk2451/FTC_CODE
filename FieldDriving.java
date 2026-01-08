@@ -31,6 +31,11 @@ public class FieldDriving extends OpMode {
 
     @Override
     public void loop() {
+        double right_trigger_value = (gamepad1.right_trigger);
+        double left_trigger_value = (-gamepad1.left_trigger);
+        double speed = left_trigger_value + right_trigger_value;
+        drive.runBall_launcher(speed);
+
         double forward = -gamepad1.left_stick_y;
         double right = gamepad1.left_stick_x;
         double rotate = -gamepad1.right_stick_x;
@@ -47,15 +52,22 @@ public class FieldDriving extends OpMode {
             drive.runIntake(1.0);
             drive.runIntakeServos(1.0, 0.0);
         }
+
         if (gamepad1.b) {
             drive.runIntake(0);
             drive.runIntakeServos(0.5, 0.5);
         }
-        if (gamepad1.left_bumper) {
-            drive.runLauncherServos(0.0, 0.85);
+        if (gamepad1.dpad_left) {
+            drive.runSorterServos(0, 0, 0);
         }
-        if (gamepad1.right_bumper) {
-            drive.runLauncherServos(0.75, 0.15);
+        if (gamepad1.dpad_right) {
+            drive.runSorterServos(1, 1, 1);
+        }
+        if (gamepad1.dpad_up) {
+            drive.runSorterServos(1, 0.5, 0);
+        }
+        if (gamepad1.dpad_down) {
+            drive.runSorterServos(0.5, 0.5, 0.5);
         }
     }
 }

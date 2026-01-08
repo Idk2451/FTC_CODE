@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -17,6 +16,9 @@ public class Autonomus extends OpMode {
     }
     Drivetrain drive = new Drivetrain();
     State state = State.START;
+    @Override
+    public void init() {
+    }
     public void start() {
         State state = State.DRIVE;
     }
