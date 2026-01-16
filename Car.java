@@ -12,9 +12,9 @@ public class Car extends OpMode{
     }
 
     public void loop () {
-        double right_trigger_value = (gamepad1.right_trigger);
-        double left_trigger_value = (-gamepad1.left_trigger);
-        double speed = left_trigger_value + right_trigger_value;
+        float right_trigger_value = (gamepad1.right_trigger);
+        float left_trigger_value = (-gamepad1.left_trigger);
+        float speed = left_trigger_value + right_trigger_value;
         front_left.setPower(speed);
         telemetry.addData("Motor power", speed);
     }

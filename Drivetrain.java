@@ -40,13 +40,13 @@ public class Drivetrain  {
         back_distance = hardwareMap.get(DistanceSensor.class, "back_distance");
         left_intake_motor = hardwareMap.dcMotor.get("left_intake_motor");
         right_intake_motor = hardwareMap.dcMotor.get("right_intake_motor");
-        ball_launch_motor = hardwareMap.dcMotor.get("ball_launch_motor");
+        launch_motor = hardwareMap.dcMotor.get("launch_motor");
         left_intake_servo = hardwareMap.servo.get("left_intake_servo");
         right_intake_servo = hardwareMap.servo.get("right_intake_servo");
         left_sorting_servo = hardwareMap.servo.get("left_sorting_servo");
         middle_sorting_servo = hardwareMap.servo.get("middle_sorting_servo");
         right_sorting_servo = hardwareMap.servo.get("right_sorting_servo");
-        launch_motor = hardwareMap.dcMotor.get("launch_motor");
+        ball_launch_motor = hardwareMap.dcMotor.get("ball_launch_motor");
         front_left = hardwareMap.dcMotor.get("front_left");
         back_left = hardwareMap.dcMotor.get("back_left");
         back_right  = hardwareMap.dcMotor.get("back_right");
@@ -80,8 +80,6 @@ public class Drivetrain  {
         back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        launch_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ball_launch_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     private void setPowers(double front_left_power, double back_left_power, double back_right_power , double front_right_power) {
         double maxSpeed  = 1.0;
@@ -128,9 +126,7 @@ public class Drivetrain  {
         turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
         drive(0, right, turnSpeed);
     }
-    public void runLauncher (double launchPower) {
-        launch_motor.setPower(launchPower);
-    }
+    public void runLauncher (double launchPower) { launch_motor.setPower(launchPower);}
     public void runIntake (double intakePower) {
          left_intake_motor.setPower(intakePower);
          right_intake_motor.setPower(intakePower);

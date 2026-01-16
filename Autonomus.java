@@ -3,36 +3,54 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 @Autonomous
 public class Autonomus extends OpMode {
-    public int shoot_line = 100;
+    Drivetrain drive = new Drivetrain();
+    State state = State.START;
     enum State {
         START,
         DRIVE,
+        SHOOT,
+        STOP
     }
-    Drivetrain drive = new Drivetrain();
-    State state = State.START;
     @Override
     public void init() {
-    }
-    public void start() {
-        State state = State.DRIVE;
+        drive.init(hardwareMap);
     }
     @Override
     public void loop () {
         telemetry.addData( "State", state);
         switch(state){
+            case START:
+                drive.runLauncher(1.0);
+                drive.runIntake(1.0);
+                drive.runIntakeServos(1.0, 0.0);
+                state = State.DRIVE;
+                break;
+
             case DRIVE:
-                if (drive.front_distance.getDistance(DistanceUnit.CM) > shoot_line) {
-                    drive.driveStraight(1, 0);
+                drive.driveStraight(1.0, 0.0);
+                try {
+                    TimeUnit.SECONDS.sleep(2);
                 }
-                else {
-                    break;
-                }
+                catch (InterruptedException e){
+                    Thread.currentThread().interrupt();
+            }
+                drive.driveStraight(0.0,0.0);
+                drive.drive(0.0, 0.0, 0.5);
+                state = State.SHOOT;
+                break;
+            case SHOOT:
+                drive.runBall_launcher(1);
+                state = State.STOP;
+            case STOP:
+                drive.runBall_launcher(0);
+                drive.runLauncher(0);
+                drive.runIntake(0);
+                drive.runIntakeServos(0.5, 0.5);
+                break;
         }
     }
 }
