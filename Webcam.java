@@ -16,14 +16,13 @@ public class Webcam extends OpMode {
     private VisionPortal visionPortal;
 
     @Override
-    public void init (){
+    public void init () {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = VisionPortal.easyCreateWithDefaults(webcamName, aprilTagProcessor);
     }
 
-    @Override
-    public void init_loop () {
+    public void init_loop()  {
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
         StringBuilder idsFound = new StringBuilder();
     for (AprilTagDetection detection : currentDetections) {

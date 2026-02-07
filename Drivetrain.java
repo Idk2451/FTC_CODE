@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -14,12 +16,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Drivetrain  {
-    private IMU imu;
+    public IMU imu;
     private DcMotor front_left;
     private DcMotor back_left;
     private DcMotor front_right;
     private DcMotor back_right;
-    private DcMotor launch_motor;
+    public DcMotorEx launch_motor;
     private DcMotor left_intake_motor;
     private DcMotor right_intake_motor;
     private DcMotor ball_launch_motor;
@@ -31,8 +33,8 @@ public class Drivetrain  {
     public DistanceSensor front_distance;
     public DistanceSensor back_distance;
     // Variables
-    public double P_DRIVE_GAIN;
-    public double P_TURN_GAIN;
+    public double P_DRIVE_GAIN = 0.02;
+    public double P_TURN_GAIN = 0.035;
     public double turnSpeed;
     public void init(@NonNull HardwareMap hardwareMap) {
         // Hardware Mapping
@@ -40,7 +42,7 @@ public class Drivetrain  {
         back_distance = hardwareMap.get(DistanceSensor.class, "back_distance");
         left_intake_motor = hardwareMap.dcMotor.get("left_intake_motor");
         right_intake_motor = hardwareMap.dcMotor.get("right_intake_motor");
-        launch_motor = hardwareMap.dcMotor.get("launch_motor");
+        launch_motor = hardwareMap.get(DcMotorEx.class, "launch_motor");
         left_intake_servo = hardwareMap.servo.get("left_intake_servo");
         right_intake_servo = hardwareMap.servo.get("right_intake_servo");
         left_sorting_servo = hardwareMap.servo.get("left_sorting_servo");
@@ -54,7 +56,7 @@ public class Drivetrain  {
         // IMU HARDWARE MAPPING
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         // Setting the opposite side as the opposite of the other
@@ -62,26 +64,27 @@ public class Drivetrain  {
         back_left.setDirection(DcMotor.Direction.REVERSE);
         front_right.setDirection(DcMotor.Direction.FORWARD);
         back_right.setDirection(DcMotor.Direction.REVERSE);
-        launch_motor.setDirection(DcMotor.Direction.REVERSE);
+        launch_motor.setDirection(DcMotorSimple.Direction.REVERSE);
         left_intake_motor.setDirection(DcMotor.Direction.FORWARD);
         right_intake_motor.setDirection(DcMotor.Direction.REVERSE);
         ball_launch_motor.setDirection(DcMotor.Direction.FORWARD);
         // Settings the Encoding
-        front_left.setMode(com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER);
+        front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        launch_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launch_motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         left_intake_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_intake_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ball_launch_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Braking
-        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        launch_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-    private void setPowers(double front_left_power, double back_left_power, double back_right_power , double front_right_power) {
+    private void setPowers(double front_left_power, double back_left_power, double front_right_power , double back_right_power) {
         double maxSpeed  = 1.0;
         maxSpeed = Math.max(maxSpeed, Math.abs(front_left_power));
         maxSpeed = Math.max(maxSpeed, Math.abs(back_left_power));
@@ -100,9 +103,9 @@ public class Drivetrain  {
     }
     public void drive (double forward, double right, double rotate) {
         double front_left_power = forward + right + rotate;
-        double back_left_power = forward + right - rotate;
-        double front_right_power = forward - right + rotate;
-        double back_right_power = forward - right - rotate;
+        double back_left_power = forward - right + rotate;
+        double front_right_power = forward - right - rotate;
+        double back_right_power = forward + right - rotate;
         setPowers(front_left_power, back_left_power, front_right_power, back_right_power);
     }
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
@@ -118,6 +121,10 @@ public class Drivetrain  {
         return
                 orientation.getYaw(AngleUnit.DEGREES);
     }
+    public void turnToHeading(double rotate, double heading) {
+        turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+        drive(0,0, turnSpeed);
+    }
     public void driveStraight(double forward, double heading) {
         turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
         drive(forward, 0, turnSpeed);
@@ -126,7 +133,8 @@ public class Drivetrain  {
         turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
         drive(0, right, turnSpeed);
     }
-    public void runLauncher (double launchPower) { launch_motor.setPower(launchPower);}
+    public void runLauncher (
+            int launchVelocity) { launch_motor.setVelocity(launchVelocity);}
     public void runIntake (double intakePower) {
          left_intake_motor.setPower(intakePower);
          right_intake_motor.setPower(intakePower);

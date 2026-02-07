@@ -14,27 +14,28 @@ public class Driving extends OpMode {
 
     @Override
     public void loop() {
-
+        telemetry.addData("Launch Velocity", drive.launch_motor.getVelocity());
+        telemetry.update();
         float right_trigger_value = (gamepad1.right_trigger);
         float left_trigger_value = (-gamepad1.left_trigger);
         float speed = left_trigger_value + right_trigger_value;
         drive.runBall_launcher(speed);
 
         float forward = -gamepad1.left_stick_y;
-        float right = -gamepad1.right_stick_x;
-        float rotate = -gamepad1.left_stick_x;
+        float right = gamepad1.left_stick_x;
+        float rotate = gamepad1.right_stick_x;
 
         drive.drive(forward, right, rotate);
 
         if (gamepad1.y) {
-            drive.runLauncher(1.0);
+            drive.runLauncher(2000);
         }
         if (gamepad1.a) {
             drive.runLauncher(0);
         }
         if (gamepad1.x) {
             drive.runIntake(1.0);
-            drive.runIntakeServos(1.0, 0.0);
+            drive.runIntakeServos(1, 0);
         }
         if (gamepad1.left_bumper) {
             drive.runSorterServos(0.5, 0.5, 0.5);
@@ -44,7 +45,7 @@ public class Driving extends OpMode {
             drive.runIntakeServos(0.5, 0.5);
         }
         if (gamepad1.dpad_left) {
-            drive.runSorterServos(0, 0, 0);
+            drive.runSorterServos(0, 0, 0.5);
         }
         if (gamepad1.dpad_right) {
             drive.runSorterServos(1, 1, 1);
