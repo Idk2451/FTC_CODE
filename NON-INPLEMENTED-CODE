@@ -1,0 +1,38 @@
+ case STRAFERIGHTROCKET:
+                if (timer1.milliseconds() > 400) {
+                    timer1.reset();
+                    drive.drive(0, 0, 0);
+                    state = State.STRAFETURNLEFTROCKET;
+                }
+                else {
+                    drive.driveStrafe(0.3, 0);
+                }
+                break;
+
+            case STRAFETURNLEFTROCKET:
+                if (timer1.milliseconds() >400) {
+                    timer1.reset();
+                    drive.drive(0, 0, 0);
+                    state = State.FOLLOWLINE;
+                }
+                else {
+                    drive.turnToHeading(1, 25);
+                }
+                break;
+
+            case FOLLOWLINE:
+                if (timer1.milliseconds() > 5000) {
+                    timer1.reset();
+                    drive.drive(0, 0, 0);
+                    state = State.STOP;
+                }
+                else {
+                    if (sensor.getAmountLeftBlue() > 12000) {
+                        drive.drive(-0.3, 0, -0.3);
+                    }
+                    else {
+                        drive.drive(0.3, 0, 0.3);
+                    }
+                }
+                break;
+
